@@ -14,7 +14,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import About from "./pages/About";  
 // Admin pages
-import AdminLogin from "./pages/admin/AdminLogin";
+
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageProducts from "./pages/admin/ManageProducts";
 import ManageOrders from "./pages/admin/ManageOrders";
@@ -41,7 +41,6 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         {/* Admin routes */}
-        <Route path="/admin/login" element={<AdminLogin />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
         <Route path="/admin/products" element={<ManageProducts />} />
         <Route path="/admin/orders" element={<ManageOrders />} />

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Users, Edit2, Trash2, ShieldCheck } from "lucide-react";
+import { Users, Edit2, Trash2, ShieldCheck, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // Sample user data
 const initialUsers = [
@@ -39,6 +40,23 @@ const ManageUsers = () => {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-amber-50 p-6">
+      {/* Back to Dashboard */}
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6 }}
+        className="mb-6"
+      >
+        <Link
+          to="/admin/dashboard"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-rose-400 text-white rounded-xl hover:bg-rose-500 transition"
+        >
+          <ArrowLeft size={20} />
+          Back to Dashboard
+        </Link>
+      </motion.div>
+
+      {/* Page Title */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -58,10 +76,14 @@ const ManageUsers = () => {
         View, edit, activate/deactivate, or remove user accounts easily.
       </motion.p>
 
+      {/* Users Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {users.map((user) => (
           <motion.div
             key={user.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: user.id * 0.05 }}
             whileHover={{ scale: 1.03 }}
             className={`bg-white rounded-3xl shadow-lg border-l-8 p-6 ${
               user.status === "Active" ? "border-rose-400" : "border-pink-400"
@@ -69,15 +91,23 @@ const ManageUsers = () => {
           >
             <div className="mb-4">
               <h3 className="text-xl font-semibold text-rose-600 mb-1">{user.name}</h3>
-              <p className="text-gray-700 mb-1"><span className="font-semibold">Email:</span> {user.email}</p>
-              <p className="text-gray-700 mb-1"><span className="font-semibold">Role:</span> {user.role}</p>
-              <p className={`font-semibold ${user.status === "Active" ? "text-green-600" : "text-pink-600"}`}>
+              <p className="text-gray-700 mb-1">
+                <span className="font-semibold">Email:</span> {user.email}
+              </p>
+              <p className="text-gray-700 mb-1">
+                <span className="font-semibold">Role:</span> {user.role}
+              </p>
+              <p
+                className={`font-semibold ${
+                  user.status === "Active" ? "text-green-600" : "text-pink-600"
+                }`}
+              >
                 Status: {user.status}
               </p>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex justify-between mt-4">
+            <div className="flex flex-wrap justify-between mt-4 gap-2">
               <button
                 onClick={() => handleEditRole(user.id)}
                 className="flex items-center gap-1 px-3 py-1 bg-amber-400 text-white rounded-xl hover:bg-amber-500 transition"

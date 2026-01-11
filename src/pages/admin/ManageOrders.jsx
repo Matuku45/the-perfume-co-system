@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Box, ShoppingCart, Truck, Users, CheckCircle, XCircle } from "lucide-react";
+import { Box, ShoppingCart, Truck, Users, CheckCircle, XCircle, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const sampleOrders = [
   {
@@ -40,7 +41,7 @@ const sampleOrders = [
 const ManageOrders = () => {
   const [orders, setOrders] = useState(sampleOrders);
 
-  // Example function to update order status
+  // Update order status
   const updateStatus = (id, newStatus) => {
     setOrders((prev) =>
       prev.map((order) =>
@@ -51,11 +52,27 @@ const ManageOrders = () => {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-amber-50 p-6">
+      {/* Back to Dashboard */}
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6 }}
+        className="mb-6"
+      >
+        <Link
+          to="/admin/dashboard"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-rose-400 text-white rounded-xl hover:bg-rose-500 transition"
+        >
+          <ArrowLeft size={20} />
+          Back to Dashboard
+        </Link>
+      </motion.div>
+
       <motion.h2
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8 }}
-        className="text-3xl font-bold text-rose-600 mb-6 text-center"
+        className="text-3xl font-bold text-rose-600 mb-4 text-center"
       >
         Manage Orders
       </motion.h2>
@@ -74,6 +91,9 @@ const ManageOrders = () => {
         {orders.map((order) => (
           <motion.div
             key={order.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: order.id * 0.05 }}
             whileHover={{ scale: 1.03 }}
             className="bg-white rounded-3xl shadow-lg border-l-8 border-rose-400 p-6 flex flex-col justify-between"
           >
@@ -85,19 +105,16 @@ const ManageOrders = () => {
                 <span className="font-semibold">Customer:</span> {order.customer}
               </p>
               <p className="text-gray-700">
-                <span className="font-semibold">Product:</span> {order.product} (
-                {order.quantity})
+                <span className="font-semibold">Product:</span> {order.product} ({order.quantity})
               </p>
               <p className="text-gray-700">
                 <span className="font-semibold">Location:</span> {order.location}
               </p>
             </div>
 
-            {/* Status Badge */}
+            {/* Status Badge & Actions */}
             <div className="flex justify-between items-center mt-4">
               <StatusBadge status={order.status} />
-
-              {/* Action Buttons */}
               <div className="flex gap-2">
                 {order.status === "Pending" && (
                   <>
@@ -132,7 +149,7 @@ const ManageOrders = () => {
   );
 };
 
-/* Status Badge Component */
+// Status Badge Component
 const StatusBadge = ({ status }) => {
   let color, Icon;
   switch (status) {
@@ -157,7 +174,9 @@ const StatusBadge = ({ status }) => {
   }
 
   return (
-    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full font-semibold text-sm ${color}`}>
+    <span
+      className={`inline-flex items-center gap-1 px-3 py-1 rounded-full font-semibold text-sm ${color}`}
+    >
       {Icon && <Icon size={16} />}
       {status}
     </span>

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Box, Edit2, Trash2, PlusCircle } from "lucide-react";
+import { Box, Edit2, Trash2, PlusCircle, ArrowLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 
 // Sample product data
 const initialProducts = [
@@ -46,6 +47,22 @@ const ManageProducts = () => {
 
   return (
     <main className="min-h-screen bg-gradient-to-br from-pink-50 via-rose-50 to-amber-50 p-6">
+      {/* Back to Dashboard */}
+      <motion.div
+        initial={{ opacity: 0, x: -50 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6 }}
+        className="mb-6"
+      >
+        <Link
+          to="/admin/dashboard"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-rose-400 text-white rounded-xl hover:bg-rose-500 transition"
+        >
+          <ArrowLeft size={20} />
+          Back to Dashboard
+        </Link>
+      </motion.div>
+
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -75,6 +92,9 @@ const ManageProducts = () => {
         {products.map((product) => (
           <motion.div
             key={product.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: product.id * 0.05 }}
             whileHover={{ scale: 1.03 }}
             className="bg-white rounded-3xl shadow-lg border-l-8 border-rose-400 p-6 flex flex-col justify-between"
           >
