@@ -1,21 +1,51 @@
-from flask import Blueprint
-from controllers.product_controller import (
-    get_products,
-    get_product,
-    create_product,
-    update_product,
-    delete_product
-)
-from middleware.auth_middleware import token_required
-from middleware.admin_middleware import admin_required
+# controllers/product_controller.py
+from flask import request, jsonify
+from models.product import Product
+from config.db import db  # Assuming you have SQLAlchemy instance called `db`
 
-product_routes = Blueprint("product_routes", __name__)
+# Get all products
+def get_products():
+    products = Product.query.all()
+    return jsonify([p.to_dict() for p in products]), 200
 
-# Public
-product_routes.route("/", methods=["GET"])(get_products)
-product_routes.route("/<int:product_id>", methods=["GET"])(get_product)
+# Get a single product
+def get_product(product_id):
+    product = Product.query.get(product_id)
+    if not product:
+        return jsonify({"error": "Product not found"}), 404
+    return jsonify(product.to_dict()), 200
 
-# Admin only
-product_routes.route("/", methods=["POST"])(token_required(admin_required(create_product)))
-product_routes.route("/<int:product_id>", methods=["PUT"])(token_required(admin_required(update_product)))
-product_routes.route("/<int:product_id>", methods=["DELETE"])(token_required(admin_required(delete_product)))
+# Create product (Admin only)
+def create_product():
+    data = request.get_json()
+    product = Product(
+        name=data.get("name"),
+        description=data.get("description"),
+        price=data.get("price"),
+        image=data.get("image")
+    )
+    db.session.add(product)
+    db.session.commit()
+    return jsonify({"message": "Product created", "product": product.to_dict()}), 201
+
+# Update product (Admin only)
+def update_product(product_id):
+    product = Product.query.get(product_id)
+    if not product:
+        return jsonify({"error": "Product not found"}), 404
+    data = request.get_json()
+    product.name = data.get("name", product.name)
+    product.description = data.get("description", product.description)
+    product.price = data.get("price", product.price)
+    product.image = data.get("image", product.image)
+    db.session.commit()
+    return jsonify({"message": "Product updated", "product": product.to_dict()}), 200
+
+# Delete product (Admin only)
+def delete_product(product_id):
+    product = Product.query.get(product_id)
+    if not product:
+        return jsonify({"error": "Product not found"}), 404
+    db.session.delete(product)
+    db.session.commit()
+    return jsonify({"message": "Product deleted"}), 200

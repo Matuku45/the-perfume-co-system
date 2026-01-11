@@ -1,11 +1,18 @@
-from sqlalchemy import Column, Integer, String, Float
-from config.db import Base
+# models/product.py
+from config.db import db
 
-class Product(Base):
-    __tablename__ = "products"
+class Product(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    price = db.Column(db.Float, nullable=False)
+    image = db.Column(db.String(200), nullable=True)
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String)
-    description = Column(String)
-    price = Column(Float)
-    image = Column(String)
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "price": self.price,
+            "image": self.image
+        }
