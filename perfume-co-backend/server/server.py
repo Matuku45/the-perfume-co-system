@@ -1,14 +1,10 @@
-from app import create_app
-import os
-
-app = create_app()
+import uvicorn
+from app import app
 
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", 5000))
-    debug = os.getenv("FLASK_ENV") == "development"
-
-    app.run(
+    uvicorn.run(
+        "server:app",
         host="0.0.0.0",
-        port=port,
-        debug=debug
+        port=8000,
+        reload=True
     )

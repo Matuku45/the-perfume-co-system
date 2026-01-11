@@ -1,36 +1,28 @@
-from flask import Flask
-from flask_cors import CORS
-from dotenv import load_dotenv
-import os
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-# Load environment variables
-load_dotenv()
+from routes.auth_routes import router as auth_router
+from routes.product_routes import router as product_router
+from routes.order_routes import router as order_router
+from routes.payment_routes import router as payment_router
 
-def create_app():
-    app = Flask(__name__)
+app = FastAPI(title="Perfume Co Backend")
 
-    # Basic configuration
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev_secret_key")
-    app.config["ENV"] = os.getenv("FLASK_ENV", "development")
+# CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-    # Enable CORS
-    CORS(app, supports_credentials=True)
+# Routes
+app.include_router(auth_router)
+app.include_router(product_router)
+app.include_router(order_router)
+app.include_router(payment_router)
 
-    # ===== IMPORT ROUTES =====
-    from routes.auth_routes import auth_routes
-    from routes.product_routes import product_routes
-    from routes.order_routes import order_routes
-    from routes.payment_routes import payment_routes
-
-    # ===== REGISTER ROUTES =====
-    app.register_blueprint(auth_routes, url_prefix="/api/auth")
-    app.register_blueprint(product_routes, url_prefix="/api/products")
-    app.register_blueprint(order_routes, url_prefix="/api/orders")
-    app.register_blueprint(payment_routes, url_prefix="/api/payments")
-
-    # ===== HEALTH CHECK =====
-    @app.route("/api/health", methods=["GET"])
-    def health_check():
-        return {"status": "OK", "message": "Perfume Co API is running"}
-
-    return app
+@app.get("/")
+def root():
+    return {"status": "Perfume Co API running"}
