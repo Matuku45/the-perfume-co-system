@@ -1,51 +1,23 @@
-# controllers/product_controller.py
-from flask import request, jsonify
-from models.product import Product
-from config.db import db  # Assuming you have SQLAlchemy instance called `db`
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+from controllers.product_controller import get_products, get_product
+from config.db import SessionLocal
+from schemas.product import ProductSchema
 
-# Get all products
-def get_products():
-    products = Product.query.all()
-    return jsonify([p.to_dict() for p in products]), 200
+router = APIRouter(prefix="/products", tags=["Products"])
 
-# Get a single product
-def get_product(product_id):
-    product = Product.query.get(product_id)
-    if not product:
-        return jsonify({"error": "Product not found"}), 404
-    return jsonify(product.to_dict()), 200
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-# Create product (Admin only)
-def create_product():
-    data = request.get_json()
-    product = Product(
-        name=data.get("name"),
-        description=data.get("description"),
-        price=data.get("price"),
-        image=data.get("image")
-    )
-    db.session.add(product)
-    db.session.commit()
-    return jsonify({"message": "Product created", "product": product.to_dict()}), 201
+# Public endpoints
+router.get("/", response_model=list[ProductSchema])
+def list_products(db: Session = Depends(get_db)):
+    return get_products(db)
 
-# Update product (Admin only)
-def update_product(product_id):
-    product = Product.query.get(product_id)
-    if not product:
-        return jsonify({"error": "Product not found"}), 404
-    data = request.get_json()
-    product.name = data.get("name", product.name)
-    product.description = data.get("description", product.description)
-    product.price = data.get("price", product.price)
-    product.image = data.get("image", product.image)
-    db.session.commit()
-    return jsonify({"message": "Product updated", "product": product.to_dict()}), 200
-
-# Delete product (Admin only)
-def delete_product(product_id):
-    product = Product.query.get(product_id)
-    if not product:
-        return jsonify({"error": "Product not found"}), 404
-    db.session.delete(product)
-    db.session.commit()
-    return jsonify({"message": "Product deleted"}), 200
+router.get("/{product_id}", response_model=ProductSchema)
+def retrieve_product(product_id: int, db: Session = Depends(get_db)):
+    return get_product(product_id, db)
