@@ -1,21 +1,23 @@
-from flask import Blueprint
-from controllers.order_controller import (
-    create_order,
-    get_user_orders,
-    get_order,
-    update_order_status
-)
-from middleware.auth_middleware import token_required
-from middleware.admin_middleware import admin_required
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
+from controllers.order_controller import get_user_orders
+from config.db import SessionLocal
+from schemas.order import OrderSchema
 
-order_routes = Blueprint("order_routes", __name__)
+router = APIRouter(prefix="/orders", tags=["Orders"])
 
-# User
-order_routes.route("/", methods=["POST"])(token_required(create_order))
-order_routes.route("/", methods=["GET"])(token_required(get_user_orders))
-order_routes.route("/<int:order_id>", methods=["GET"])(token_required(get_order))
+# Database dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
-# Admin
-order_routes.route("/<int:order_id>/status", methods=["PUT"])(
-    token_required(admin_required(update_order_status))
-)
+# Get orders for a specific user
+@router.get("/user/{user_id}", response_model=list[OrderSchema])
+def user_orders(user_id: int, db: Session = Depends(get_db)):
+    orders = get_user_orders(user_id, db)
+    if not orders:
+        raise HTTPException(status_code=404, detail="No orders found for this user")
+    return orders
