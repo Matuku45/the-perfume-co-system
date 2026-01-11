@@ -1,4 +1,3 @@
-# schemas/product.py
 from pydantic import BaseModel
 
 class ProductSchema(BaseModel):
@@ -9,4 +8,4 @@ class ProductSchema(BaseModel):
     image: str | None = None
 
     class Config:
-        from_attributes = True  # FastAPI v2 replacement for orm_mode
+        from_attributes = True
