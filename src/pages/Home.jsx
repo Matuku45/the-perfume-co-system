@@ -1,6 +1,6 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { Heart, Star, Truck, Shield, Gift } from "lucide-react";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Heart, Star, Truck, Shield, Gift, X, User, DollarSign, Package, MapPin, Phone } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 
@@ -13,21 +13,23 @@ import co5 from "../assets/co5.webp";
 import co6 from "../assets/co6.webp";
 import co7 from "../assets/co7.webp";
 import orangePerfume from "../assets/the-perfume-orange.jpg";
-import img1 from "../assets/268473ef-0929-48a8-bc95-3d140a72e34c.jpg";
-import img2 from "../assets/7f55c49f-9c2d-4c0c-a78c-b07be799361a.jpg";
-import img3 from "../assets/8d174e1f-a809-424e-9232-513f5b822c8f.jpg";
-import img4 from "../assets/9414f144-6531-40ae-a162-29dcff619aa2.jpg";
-import img5 from "../assets/a391e7d0-6462-4dcc-8db7-5afed42d1d5b.jpg";
-import img6 from "../assets/bd44738b-b35e-49c7-9026-3b1108db8f22.jpg";
-import inuka from "../assets/inuka.webp";
-import inuka2 from "../assets/inuka2.webp";
 import nameOfPerfumes from "../assets/nameOfPerfumes.jpg";
 
 // ================= VIDEO =================
 import perfumeVideo from "../assets/video-perfume-instore.mp4";
 
-// ================= HOME COMPONENT =================
 export default function Home() {
+  const [selectedProduct, setSelectedProduct] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    quantity: 1,
+    location: "",
+    phone: "",
+  });
+
+  // ================= PRODUCTS =================
   const products = [
     { id: 1, name: "Car Diffuser", category: "Home & Car", price: "R80", image: carMusk, description: "Car diffuser for a refreshing scent." },
     { id: 2, name: "Shampoo Perfume", category: "Personal Care", price: "R120", image: co, description: "Perfume-infused shampoo for luxury." },
@@ -37,8 +39,6 @@ export default function Home() {
     { id: 6, name: "Car Diffuser Premium", category: "Home & Car", price: "R150", image: co6, description: "Smell fresh while driving." },
     { id: 7, name: "Luxury Perfume 125", category: "Signature Scent", price: "R125", image: co7, description: "African-made premium scent." },
     { id: 8, name: "Orange Perfume", category: "Eau de Parfum", price: "R200", image: orangePerfume, description: "Citrus elegance in a bottle." },
-    { id: 9, name: "Inuka", category: "Signature Scent", price: "R180", image: inuka, description: "Premium African perfume." },
-    { id: 10, name: "Inuka 2", category: "Signature Scent", price: "R180", image: inuka2, description: "African elegance in a bottle." },
   ];
 
   const featuredPerfumes = [
@@ -50,6 +50,24 @@ export default function Home() {
     { icon: <Gift size={28} />, title: "Premium Quality", text: "Long-lasting scents" },
     { icon: <Shield size={28} />, title: "Secure Payment", text: "Safe & Trusted" },
   ];
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("Order Submitted:", { ...formData, product: selectedProduct });
+    alert(`Thank you! Your order for ${selectedProduct.name} has been received.`);
+    setIsModalOpen(false);
+    setFormData({ firstName: "", lastName: "", quantity: 1, location: "", phone: "" });
+  };
+
+  const openModal = (product) => {
+    setSelectedProduct(product);
+    setIsModalOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-amber-50 text-gray-900">
@@ -74,7 +92,7 @@ export default function Home() {
           </motion.h1>
           <p className="text-rose-900/90 text-lg sm:text-xl mb-8 drop-shadow-md">
             Luxury scents crafted for African elegance. <br />
-            Swipe down to view our store collection.
+            Log in to track your orders & enjoy exclusive offers.
           </p>
           <button className="px-10 py-3 rounded-full bg-gradient-to-r from-rose-500 to-amber-400 text-white font-semibold shadow-lg hover:scale-105 transition transform">
             Shop Now
@@ -96,7 +114,7 @@ export default function Home() {
       {/* ================= FEATURED COLLECTION ================= */}
       <section className="px-6 py-20 bg-amber-100 rounded-3xl max-w-6xl mx-auto text-center">
         <h2 className="text-3xl md:text-4xl font-bold mb-12 text-rose-800">Our Featured Collection</h2>
-        <div className="flex justify-center items-center">
+        <div className="flex justify-center items-center flex-wrap gap-6">
           {featuredPerfumes.map((f) => (
             <motion.div
               key={f.id}
@@ -142,7 +160,10 @@ export default function Home() {
                 </div>
                 <div className="flex justify-between items-center mt-6">
                   <span className="text-lg font-bold">{p.price}</span>
-                  <button className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-amber-400 text-white text-sm font-semibold hover:scale-105 transition">
+                  <button
+                    onClick={() => openModal(p)}
+                    className="px-4 py-2 rounded-xl bg-gradient-to-r from-rose-500 to-amber-400 text-white text-sm font-semibold hover:scale-105 transition"
+                  >
                     Add to Cart
                   </button>
                 </div>
@@ -151,6 +172,140 @@ export default function Home() {
           ))}
         </div>
       </section>
+
+      {/* ================= ORDER MODAL ================= */}
+      <AnimatePresence>
+        {isModalOpen && selectedProduct && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          >
+            <motion.div
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              exit={{ scale: 0.9 }}
+              className="bg-gradient-to-br from-rose-50 via-amber-50 to-yellow-50 rounded-3xl max-w-lg w-full p-8 relative shadow-2xl"
+            >
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-200"
+              >
+                <X size={24} />
+              </button>
+              <h2 className="text-2xl font-bold mb-4 text-rose-700">Order {selectedProduct.name}</h2>
+              <img src={selectedProduct.image} alt={selectedProduct.name} className="w-full h-64 object-cover rounded-xl mb-4" />
+
+              <div className="bg-amber-100 rounded-xl p-4 mb-4 text-center text-sm text-rose-800 font-semibold">
+                Log in to track your order & enjoy exclusive African scents 🌍
+              </div>
+
+              <form className="space-y-4" onSubmit={handleSubmit}>
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <label className="flex items-center gap-2 text-gray-700 font-semibold">
+                      <User size={16} /> First Name
+                    </label>
+                    <input
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-rose-400 outline-none"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="flex items-center gap-2 text-gray-700 font-semibold">
+                      <User size={16} /> Last Name
+                    </label>
+                    <input
+                      name="lastName"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-rose-400 outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex gap-2">
+                  <div className="flex-1">
+                    <label className="flex items-center gap-2 text-gray-700 font-semibold">
+                      <DollarSign size={16} /> Price
+                    </label>
+                    <input
+                      value={selectedProduct.price}
+                      readOnly
+                      className="w-full px-4 py-2 rounded-xl border border-gray-300 bg-gray-100 text-gray-600"
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <label className="flex items-center gap-2 text-gray-700 font-semibold">
+                      <Package size={16} /> Quantity
+                    </label>
+                    <input
+                      type="number"
+                      name="quantity"
+                      value={formData.quantity}
+                      min={1}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-rose-400 outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="flex items-center gap-2 text-gray-700 font-semibold">
+                    <MapPin size={16} /> Location
+                  </label>
+                  <input
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-rose-400 outline-none"
+                  />
+                </div>
+
+                <div>
+                  <label className="flex items-center gap-2 text-gray-700 font-semibold">
+                    <Phone size={16} /> Phone Number
+                  </label>
+                  <input
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-rose-400 outline-none"
+                  />
+                </div>
+
+
+ <div>
+                  <label className="flex items-center gap-2 text-gray-700 font-semibold">
+                    <Phone size={16} /> Product Name
+                  </label>
+                  <input
+                    name="phone"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-4 py-2 rounded-xl border border-gray-300 focus:ring-2 focus:ring-rose-400 outline-none"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full py-3 rounded-2xl bg-gradient-to-r from-rose-500 to-amber-400 text-white font-semibold hover:scale-105 transition"
+                >
+                  Submit Order
+                </button>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* ================= CTA ================= */}
       <section className="py-20 px-6 text-center bg-gradient-to-r from-rose-600 to-amber-500 text-white shadow-lg">

@@ -7,6 +7,7 @@ import {
   FaCommentDots,
   FaWhatsapp,
   FaMapMarkerAlt,
+  FaFacebook,
 } from "react-icons/fa";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
@@ -47,11 +48,11 @@ const Contact = () => {
             transition={{ duration: 0.8 }}
             className="text-center mb-12"
           >
-            <h1 className="text-4xl md:text-5xl font-extrabold mb-4">
+            <h1 className="text-4xl sm:text-5xl font-extrabold mb-4">
               Contact <span className="block bg-gradient-to-r from-rose-500 to-amber-400 bg-clip-text text-transparent">The Perfume Co</span>
             </h1>
-            <p className="text-gray-700">
-              Fast support, WhatsApp & Email available. We deliver your favorite African perfumes to your doorstep.
+            <p className="text-gray-700 sm:text-lg">
+              Fast support, WhatsApp, Email & Facebook available. We deliver your favorite African perfumes to your doorstep.
             </p>
           </motion.div>
 
@@ -60,45 +61,47 @@ const Contact = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="grid md:grid-cols-3 gap-6 mb-12"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12"
           >
             {/* WhatsApp */}
-            <a
-              href="https://wa.me/27123456789"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-4 p-6 rounded-2xl bg-green-500 hover:bg-green-400 transition shadow-xl"
-            >
-              <FaWhatsapp className="text-3xl" />
-              <div>
-                <p className="font-bold">WhatsApp</p>
-                <p className="text-sm">+27 123 456 789</p>
-              </div>
-            </a>
+            <ContactCard
+              icon={<FaWhatsapp className="text-3xl sm:text-4xl" />}
+              title="WhatsApp"
+              subtitle="+27 83 662 332"
+              bgColor="bg-green-500"
+              hoverColor="hover:bg-green-400"
+              href="https://wa.me/2783662332"
+            />
 
             {/* Phone */}
-            <a
-              href="tel:+27111222333"
-              className="flex items-center gap-4 p-6 rounded-2xl bg-yellow-400 text-black hover:bg-yellow-300 transition shadow-xl"
-            >
-              <FaPhoneAlt className="text-2xl" />
-              <div>
-                <p className="font-bold">Call Us</p>
-                <p className="text-sm">+27 11 222 333</p>
-              </div>
-            </a>
+            <ContactCard
+              icon={<FaPhoneAlt className="text-2xl sm:text-3xl" />}
+              title="Call Us"
+              subtitle="+27 82 899 07116"
+              bgColor="bg-yellow-400 text-black"
+              hoverColor="hover:bg-yellow-300"
+              href="tel:+278289907116"
+            />
 
             {/* Email */}
-            <a
-              href="mailto:info@theperfumeco.co.za"
-              className="flex items-center gap-4 p-6 rounded-2xl bg-indigo-500 hover:bg-indigo-400 transition shadow-xl"
-            >
-              <FaEnvelope className="text-2xl" />
-              <div>
-                <p className="font-bold">Email</p>
-                <p className="text-sm">info@theperfumeco.co.za</p>
-              </div>
-            </a>
+            <ContactCard
+              icon={<FaEnvelope className="text-2xl sm:text-3xl" />}
+              title="Email"
+              subtitle="manuelthabisompoulo@gmail.com"
+              bgColor="bg-indigo-500"
+              hoverColor="hover:bg-indigo-400"
+              href="mailto:manuelthabisompoulo@gmail.com"
+            />
+
+            {/* Facebook */}
+            <ContactCard
+              icon={<FaFacebook className="text-2xl sm:text-3xl" />}
+              title="Facebook"
+              subtitle="Man Tuku"
+              bgColor="bg-blue-600"
+              hoverColor="hover:bg-blue-500"
+              href="https://www.facebook.com/ManTuku"
+            />
           </motion.div>
 
           {/* Contact Form */}
@@ -107,7 +110,7 @@ const Contact = () => {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.6 }}
             onSubmit={handleSubmit}
-            className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl p-8 space-y-6 shadow-2xl"
+            className="bg-white/10 backdrop-blur-2xl border border-white/20 rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl max-w-full sm:max-w-xl md:max-w-2xl mx-auto"
           >
             <FormGroup label="Full Name" icon={<FaUser />}>
               <input
@@ -194,6 +197,22 @@ const FormGroup = ({ label, icon, children }) => (
     </label>
     {children}
   </div>
+);
+
+/* ---------- Reusable Contact Card ---------- */
+const ContactCard = ({ icon, title, subtitle, bgColor, hoverColor, href }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className={`flex items-center gap-4 p-6 rounded-2xl ${bgColor} ${hoverColor} transition shadow-xl`}
+  >
+    {icon}
+    <div>
+      <p className="font-bold">{title}</p>
+      <p className="text-sm">{subtitle}</p>
+    </div>
+  </a>
 );
 
 export default Contact;
