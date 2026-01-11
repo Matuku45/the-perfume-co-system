@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Menu, X, Phone, Instagram, Facebook, Sparkles } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
@@ -37,24 +37,20 @@ export default function Header() {
         {/* Desktop Nav */}
         <nav className="hidden md:flex space-x-8">
           {navLinks.map((link) => (
-            <motion.a
+            <Link
               key={link.name}
-              href={link.href}
-              whileHover={{ scale: 1.1 }}
+              to={link.href}
               className="relative font-semibold text-gray-200 hover:text-pink-400 transition group"
             >
               {link.name}
               <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-pink-400 transition-all group-hover:w-full"></span>
-            </motion.a>
+            </Link>
           ))}
         </nav>
 
         {/* Desktop Social Icons */}
         <div className="hidden md:flex items-center space-x-5">
-          <a
-            href="tel:+27712345678"
-            className="hover:text-pink-400 flex items-center gap-1"
-          >
+          <a href="tel:+27712345678" className="hover:text-pink-400 flex items-center gap-1">
             <Phone size={18} /> <span>Call</span>
           </a>
           <a href="https://instagram.com" target="_blank" rel="noreferrer" className="hover:text-pink-400">
@@ -82,14 +78,14 @@ export default function Header() {
           >
             <nav className="flex flex-col p-5 space-y-4">
               {navLinks.map((link) => (
-                <a
+                <Link
                   key={link.name}
-                  href={link.href}
+                  to={link.href}
                   onClick={() => setIsOpen(false)}
                   className="text-gray-200 hover:text-pink-400 text-lg transition"
                 >
                   {link.name}
-                </a>
+                </Link>
               ))}
               {/* Mobile Socials */}
               <div className="pt-4 border-t border-gray-700 flex space-x-4">
